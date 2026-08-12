@@ -8,7 +8,7 @@
         dataKey: 'consumables',
         title: 'Laboratory Supplies',
         subtitle: 'Consumable inventory maintained by the laboratory office.',
-        columns: ['Item Name', 'Quantity', 'Unit', 'Availability', 'Remarks'],
+        columns: ['Item Name', 'Quantity', 'Unit', 'Availability', 'Expiration Date', 'Remarks'],
         statusColumns: ['Availability'],
         searchPlaceholder: 'Search laboratory supplies'
       },
@@ -111,6 +111,7 @@
 
     function renderCell(config, column, rawValue) {
       const value = String(rawValue == null ? '' : rawValue);
+      if (column === 'Expiration Date' && !value.trim()) return '<td>&mdash;</td>';
       if (config.linkColumn === column) {
         if (!isValidWebUrl(value)) return `<td>${value ? App.escapeHtml(value) : '<span class="muted">Not available</span>'}</td>`;
         return `<td><a class="link-button" href="${App.escapeAttribute(value)}" target="_blank" rel="noopener noreferrer">Open form<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4l-8.3 8.3-1.4-1.4L17.6 5H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"/></svg></a></td>`;
