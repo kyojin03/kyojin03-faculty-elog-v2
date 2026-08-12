@@ -51,7 +51,7 @@
     }
 
     function logTechnicalError(context, error) {
-      console.error('[Faculty eLog] ' + context, error);
+      console.error('[Laboratory Log In] ' + context, error);
     }
 
     function showToast(message, type = 'info', title) {
@@ -59,7 +59,7 @@
       const toast = document.createElement('div');
       toast.className = 'toast ' + type;
       toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
-      const labels = { success: 'Success', error: 'Something went wrong', info: 'Faculty eLog' };
+      const labels = { success: 'Success', error: 'Something went wrong', info: 'Laboratory Log In' };
       const paths = {
         success: '<path d="m9 16.2-3.5-3.5L4.1 14.1 9 19 20.3 7.7l-1.4-1.4L9 16.2Z"/>',
         error: '<path d="M11 7h2v6h-2V7Zm0 8h2v2h-2v-2Zm1-13a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/>',

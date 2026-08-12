@@ -161,7 +161,7 @@
       const container = App.byId('logTableWrap');
       if (!container.querySelector('table')) container.innerHTML = '<table id="logTable"><thead></thead><tbody></tbody></table>';
       const table = container.querySelector('table');
-      const headers = ['Timestamp', 'Faculty', 'Department', 'Room', 'Room #', 'Equipment', 'Date', 'Time In', 'Time Out', 'Activity', 'Purpose', 'Remarks'];
+      const headers = ['Timestamp', 'Name', 'Department', 'Room', 'Room #', 'Equipment', 'Date', 'Time In', 'Time Out', 'Activity', 'Purpose', 'Remarks'];
       table.querySelector('thead').innerHTML = '<tr>' + headers.map(header => `<th scope="col">${App.escapeHtml(header)}</th>`).join('') + '</tr>';
 
       const safeRows = Array.isArray(rows) ? rows : [];

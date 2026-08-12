@@ -17,7 +17,7 @@ window.FacultyElogApi = (() => {
     const isAppsScriptWebApp = /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/i.test(apiUrl);
     const isLocalTestApi = /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?\/exec$/i.test(apiUrl);
     if (!isAppsScriptWebApp && !isLocalTestApi) {
-      throw new Error('The Faculty eLog API URL is not configured.');
+      throw new Error('The Laboratory Log In API URL is not configured.');
     }
   }
 
@@ -35,7 +35,7 @@ window.FacultyElogApi = (() => {
 
   async function request(functionName, ...args) {
     const route = ACTIONS[functionName];
-    if (!route) throw new Error('Unsupported Faculty eLog API operation.');
+    if (!route) throw new Error('Unsupported Laboratory Log In API operation.');
 
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
@@ -84,16 +84,16 @@ window.FacultyElogApi = (() => {
       try {
         payload = await response.json();
       } catch (_error) {
-        throw new Error('The Faculty eLog service returned an invalid response.');
+        throw new Error('The Laboratory Log In service returned an invalid response.');
       }
 
       if (!response.ok || payload?.success === false) {
-        throw new Error(payload?.message || payload?.error || `The Faculty eLog service returned ${response.status}.`);
+        throw new Error(payload?.message || payload?.error || `The Laboratory Log In service returned ${response.status}.`);
       }
 
       return Object.prototype.hasOwnProperty.call(payload || {}, 'data') ? payload.data : payload;
     } catch (error) {
-      if (error?.name === 'AbortError') throw new Error('The Faculty eLog request timed out.');
+      if (error?.name === 'AbortError') throw new Error('The Laboratory Log In request timed out.');
       throw error;
     } finally {
       window.clearTimeout(timeout);

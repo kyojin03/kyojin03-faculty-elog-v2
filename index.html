@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b2447">
-  <title>Good Samaritan Colleges | Faculty eLog</title>
+  <title>Good Samaritan Colleges | Laboratory Log In System</title>
   <link rel="icon" type="image/png" href="assets/images/good-samaritan-colleges-logo.png">
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -19,7 +19,7 @@
         <div class="brand-mark" aria-hidden="true"><img src="assets/images/good-samaritan-colleges-logo.png" alt=""></div>
         <div class="brand-copy">
           <strong>Good Samaritan Colleges</strong>
-          <span>Faculty eLog</span>
+          <span>Laboratory Log In</span>
         </div>
       </div>
 
@@ -52,7 +52,7 @@
           <div class="hero-panel">
             <div>
               <span class="section-kicker">Laboratory usage</span>
-              <h2 id="logbookHeading">Faculty Logbook</h2>
+              <h2 id="logbookHeading">Laboratory Logbook</h2>
               <p>Record your laboratory session. Fields marked with an asterisk are required.</p>
             </div>
             <div class="hero-badge" aria-label="Only the Logbook accepts submissions">
@@ -69,11 +69,11 @@
 
             <form id="logForm" novalidate>
               <fieldset>
-                <legend>Faculty and room details</legend>
+                <legend>User and room details</legend>
                 <div class="form-grid">
                   <div class="field span-2">
-                    <label for="facultyName">Faculty Name <span aria-hidden="true">*</span></label>
-                    <input id="facultyName" name="facultyName" required maxlength="120" list="facultyList" autocomplete="name" placeholder="Enter faculty name">
+                    <label for="facultyName">Name <span aria-hidden="true">*</span></label>
+                    <input id="facultyName" name="facultyName" required maxlength="120" list="facultyList" autocomplete="name" placeholder="Enter name">
                     <datalist id="facultyList"></datalist>
                   </div>
                   <div class="field">
@@ -147,7 +147,7 @@
               <div class="search-field">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4a6 6 0 1 0 3.5 10.9l4.8 4.8 1.4-1.4-4.8-4.8A6 6 0 0 0 10 4Zm0 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/></svg>
                 <label class="sr-only" for="search">Search logbook</label>
-                <input id="search" type="search" placeholder="Search faculty, room, equipment, purpose..." autocomplete="off">
+                <input id="search" type="search" placeholder="Search name, room, equipment, purpose..." autocomplete="off">
               </div>
               <div class="filter-fields">
                 <div class="compact-field"><label for="deptFilter">Department</label><select id="deptFilter"><option value="">All departments</option></select></div>
@@ -181,10 +181,10 @@
           </div>
           <div class="report-grid" id="reportGrid">
             <article class="report-card"><div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13h-6v-6h-4v6H4Zm2-2h2v-6h8v6h2V9l-6-3.8L6 9v10Z"/></svg></div><div><h3>Room Usage</h3><p>Sessions by laboratory room</p></div></div><div id="reportRooms" class="ranking-list"></div></article>
-            <article class="report-card"><div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm-8 18v-3c0-3.3 3.6-5 8-5s8 1.7 8 5v3h-2v-3c0-1.6-2.4-3-6-3s-6 1.4-6 3v3H4Z"/></svg></div><div><h3>Faculty Usage</h3><p>Sessions recorded per faculty member</p></div></div><div id="reportFaculty" class="ranking-list"></div></article>
+            <article class="report-card"><div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm-8 18v-3c0-3.3 3.6-5 8-5s8 1.7 8 5v3h-2v-3c0-1.6-2.4-3-6-3s-6 1.4-6 3v3H4Z"/></svg></div><div><h3>User Activity</h3><p>Sessions recorded per laboratory user</p></div></div><div id="reportFaculty" class="ranking-list"></div></article>
             <article class="report-card"><div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v5h3v13H4V8h3V3Zm2 2v5H6v9h12v-9h-3V5H9Zm2 0v3h2V5h-2Z"/></svg></div><div><h3>Equipment Used</h3><p>Most frequently recorded equipment</p></div></div><div id="reportEquipment" class="ranking-list"></div></article>
-            <article class="report-card"><div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V3h3v14h-3Zm5 0v-6h3v6h-3Z"/></svg></div><div><h3>Faculty Hours</h3><p>Total laboratory hours per faculty</p></div></div><div id="reportHours" class="ranking-list"></div></article>
-            <article class="report-card span-2-report"><div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6v2h-1v5.1l4.7 8.1A3.2 3.2 0 0 1 15.9 22H8.1a3.2 3.2 0 0 1-2.8-4.8L10 9.1V4H9V2Zm3 8-5 8.2c-.5.8.1 1.8 1.1 1.8h7.8c1 0 1.6-1 1.1-1.8L12 10Z"/></svg></div><div><h3>Experiment Faculty</h3><p>Experiment sessions by faculty member</p></div></div><div id="reportExperiments" class="ranking-list two-column-ranking"></div></article>
+            <article class="report-card"><div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V3h3v14h-3Zm5 0v-6h3v6h-3Z"/></svg></div><div><h3>User Hours</h3><p>Total laboratory hours per user</p></div></div><div id="reportHours" class="ranking-list"></div></article>
+            <article class="report-card span-2-report"><div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h6v2h-1v5.1l4.7 8.1A3.2 3.2 0 0 1 15.9 22H8.1a3.2 3.2 0 0 1-2.8-4.8L10 9.1V4H9V2Zm3 8-5 8.2c-.5.8.1 1.8 1.1 1.8h7.8c1 0 1.6-1 1.1-1.8L12 10Z"/></svg></div><div><h3>Experiment Users</h3><p>Experiment sessions by laboratory user</p></div></div><div id="reportExperiments" class="ranking-list two-column-ranking"></div></article>
           </div>
         </section>
 
@@ -195,7 +195,7 @@
         <section id="view-forms" class="view" aria-labelledby="formsHeading"></section>
       </main>
 
-      <footer><span>Good Samaritan Colleges</span><span aria-hidden="true">&bull;</span><span>Faculty Laboratory eLog System</span></footer>
+      <footer><span>Good Samaritan Colleges</span><span aria-hidden="true">&bull;</span><span>Laboratory Log In System</span></footer>
     </div>
   </div>
 
@@ -203,12 +203,12 @@
     <div class="startup-card" id="startupLoading">
       <img class="startup-mark" src="assets/images/good-samaritan-colleges-logo.png" alt="Good Samaritan Colleges logo">
       <div class="loading-ring" aria-hidden="true"></div>
-      <h2>Faculty eLog</h2>
+      <h2>Laboratory Log In System</h2>
       <p>Loading laboratory records...</p>
     </div>
     <div class="startup-card error-card" id="startupError" hidden>
       <div class="error-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 7h2v6h-2V7Zm0 8h2v2h-2v-2Zm1-13a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/></svg></div>
-      <h2>Unable to load Faculty eLog data</h2>
+      <h2>Unable to load Laboratory Log In data</h2>
       <p>Please check your connection and try again.</p>
       <button class="button primary-button" id="retryInitialLoad" type="button">Try again</button>
     </div>

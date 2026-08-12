@@ -1,6 +1,6 @@
-# Faculty eLog V2 | GitHub Pages + Google Apps Script
+# Laboratory Log In System | GitHub Pages + Google Apps Script
 
-Production frontend for the Good Samaritan Colleges Faculty Laboratory eLog System.
+Production frontend for the Good Samaritan Colleges Laboratory Log In System.
 
 ## Architecture
 
@@ -63,7 +63,7 @@ The frontend uses `application/x-www-form-urlencoded` for `submitLog`. This is c
 
 ## Deploy the backend
 
-1. Open the existing Faculty eLog Google Sheet.
+1. Open the existing Laboratory Log In Google Sheet.
 2. Open **Extensions -> Apps Script**.
 3. Replace the existing `Code.gs` with the supplied `Code.gs`.
 4. In **Project Settings**, enable **Show "appsscript.json" manifest file in editor** and replace it with the supplied manifest if appropriate for the project.
@@ -96,4 +96,4 @@ Do not publish `Code.gs` as a browser script. It is copied only into the existin
 
 Only Logbook accepts website input through the `submitLog` action. Reports, Laboratory Supplies, Glassware, Equipment, Specialized Equipment, and Laboratory Forms are read-only. Their information is maintained directly in Google Sheets.
 
-`Rooms` controls the room dropdown and room-name display. Active `Activity Type` rows in `Settings` control the activity selector. Existing Logbook faculty names and departments provide form suggestions and filters.
+`Rooms` controls the room dropdown and room-name display. Active `Activity Type` rows in `Settings` control the activity selector. Existing Logbook names and departments provide form suggestions and filters.
