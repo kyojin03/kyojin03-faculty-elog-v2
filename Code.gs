@@ -184,6 +184,16 @@ function setupSheets() {
     sh.autoResizeColumns(1, headers.length);
   });
 
+  // Ensure Logbook Timestamp column uses M/d/yyyy h:mm:ss AM/PM display while values remain Date (Asia/Manila)
+  const logbookSheet = ss.getSheetByName(SHEETS.LOGBOOK);
+  if (logbookSheet) {
+    if (logbookSheet.getLastRow() > 1) {
+      logbookSheet.getRange(2, 1, logbookSheet.getLastRow() - 1, 1).setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
+    } else {
+      logbookSheet.getRange('A2:A').setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
+    }
+  }
+
   seedSettings_();
   return 'Faculty eLog sheets are ready.';
 }
@@ -217,8 +227,9 @@ function submitLog(entry) {
   validateLog_(entry);
 
   const sh = getRequiredSheet_(SHEETS.LOGBOOK);
+  const now = new Date(); // real Date value; project timezone Asia/Manila
   const row = [
-    new Date(),
+    now,
     clean_(entry.facultyName),
     clean_(entry.department),
     clean_(entry.roomName),
@@ -233,6 +244,14 @@ function submitLog(entry) {
   ];
 
   sh.appendRow(row);
+
+  // Explicitly apply display format M/d/yyyy h:mm:ss AM/PM to Timestamp while keeping value as Date (Asia/Manila)
+  const timestampRow = sh.getLastRow();
+  sh.getRange(timestampRow, 1).setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
+  // Ensure existing Logbook Timestamp cells remain consistently formatted
+  if (sh.getLastRow() > 1) {
+    sh.getRange(2, 1, sh.getLastRow() - 1, 1).setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
+  }
 
   return {
     success: true,
