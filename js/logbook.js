@@ -157,6 +157,78 @@
       return count + (count === 1 ? ' record' : ' records');
     }
 
+    function formatTimestamp(value) {
+      if (value == null) return '';
+      const raw = String(value).trim();
+      if (!raw) return '';
+      if (value instanceof Date && !isNaN(value)) {
+        return formatTimestampViaManila(value);
+      }
+      const slashMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*([AaPp][Mm]))?)?$/);
+      if (slashMatch) {
+        const month = Number(slashMatch[1]);
+        const day = Number(slashMatch[2]);
+        const year = Number(slashMatch[3]);
+        if (slashMatch[4] !== undefined) {
+          let hour = Number(slashMatch[4]);
+          const minute = Number(slashMatch[5]);
+          const second = slashMatch[6] !== undefined ? Number(slashMatch[6]) : 0;
+          const ampmRaw = slashMatch[7];
+          if (ampmRaw) {
+            const isPM = ampmRaw.toLowerCase() === 'pm';
+            if (hour === 12) hour = isPM ? 12 : 0;
+            else hour = isPM ? hour + 12 : hour;
+          }
+          return formatTimestampFromParts(month, day, year, hour, minute, second);
+        }
+        return `${month}/${day}/${year}`;
+      }
+      const hasTimezone = /[Zz]$/.test(raw) || /[+-]\d{2}:?\d{2}$/.test(raw) || /\bGMT\b/i.test(raw);
+      if (!hasTimezone) {
+        const isoLike = raw.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[T\s](\d{1,2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?)?$/);
+        if (isoLike) {
+          const year = Number(isoLike[1]);
+          const month = Number(isoLike[2]);
+          const day = Number(isoLike[3]);
+          if (isoLike[4] !== undefined) {
+            const hour = Number(isoLike[4]);
+            const minute = Number(isoLike[5]);
+            const second = isoLike[6] !== undefined ? Number(isoLike[6]) : 0;
+            return formatTimestampFromParts(month, day, year, hour, minute, second);
+          }
+          return `${month}/${day}/${year}`;
+        }
+      }
+      const parsed = new Date(raw);
+      if (!isNaN(parsed)) {
+        return formatTimestampViaManila(parsed);
+      }
+      return raw;
+    }
+
+    function formatTimestampViaManila(date) {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Manila',
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      }).formatToParts(date);
+      const get = type => parts.find(p => p.type === type)?.value || '';
+      return `${get('month')}/${get('day')}/${get('year')} ${get('hour')}:${get('minute')}:${get('second')} ${get('dayPeriod').toUpperCase()}`;
+    }
+
+    function formatTimestampFromParts(month, day, year, hour24, minute, second) {
+      const pad2 = n => String(n).padStart(2, '0');
+      const ampm = hour24 >= 12 ? 'PM' : 'AM';
+      let hour12 = hour24 % 12;
+      if (hour12 === 0) hour12 = 12;
+      return `${month}/${day}/${year} ${hour12}:${pad2(minute)}:${pad2(second)} ${ampm}`;
+    }
+
     function renderLogs(rows) {
       const container = App.byId('logTableWrap');
       if (!container.querySelector('table')) container.innerHTML = '<table id="logTable"><thead></thead><tbody></tbody></table>';
@@ -172,7 +244,7 @@
       }
 
       table.querySelector('tbody').innerHTML = safeRows.slice().reverse().map(row => `<tr>
-        <td>${App.escapeHtml(row.Timestamp)}</td>
+        <td>${App.escapeHtml(formatTimestamp(row.Timestamp))}</td>
         <td><strong>${App.escapeHtml(row['Faculty Name'])}</strong></td>
         <td>${App.escapeHtml(row.Department)}</td>
         <td>${App.escapeHtml(row['Room Name'])}</td>
