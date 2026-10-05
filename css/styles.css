@@ -82,6 +82,7 @@
   .view.active { display: block; }
   @keyframes view-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
   footer { display: flex; justify-content: center; gap: 9px; padding: 19px 24px 25px; color: var(--muted-2); font-size: 11px; }
+  .developer-watermark { color: #8a96a6; font-size: 10px; letter-spacing: .01em; }
 
   .section-kicker { color: var(--blue-700); font-size: 10px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
   .hero-panel { position: relative; min-height: 144px; display: flex; align-items: center; justify-content: space-between; gap: 26px; margin-bottom: 20px; padding: 27px 31px; overflow: hidden; border-radius: var(--radius-lg); background: linear-gradient(115deg, var(--navy-900), #123f72); color: #fff; box-shadow: var(--shadow-sm); }
@@ -302,9 +303,17 @@
   }
 
   @media print {
-    @page { margin: 12mm; }
+    @page {
+      margin: 12mm 12mm 18mm;
+      @bottom-center {
+        content: "Designed & Developed by Piolo L. Bernardino";
+        color: #777;
+        font-family: Arial, sans-serif;
+        font-size: 7.5pt;
+      }
+    }
     body { background: #fff; font-size: 10pt; }
-    .sidebar, .topbar, footer, .page-actions, .toast-region, .startup-overlay, .filter-panel, .form-card, .hero-panel, .inventory-toolbar { display: none !important; }
+    .sidebar, .topbar, footer, .skip-link, .page-actions, .toast-region, .startup-overlay, .filter-panel, .form-card, .hero-panel, .inventory-toolbar { display: none !important; }
     .workspace { margin: 0; }
     main { max-width: none; padding: 0; }
     .view { display: none !important; }
