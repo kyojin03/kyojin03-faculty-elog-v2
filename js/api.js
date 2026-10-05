@@ -69,8 +69,6 @@ window.FacultyElogApi = (() => {
         roomNumber: entry.roomNumber || '',
         roomName: entry.roomName || '',
         equipmentUsed: entry.equipmentUsed || '',
-        date: entry.date || '',
-        timeIn: entry.timeIn || '',
         timeOut: entry.timeOut || '',
         activityType: entry.activityType || '',
         purpose: entry.purpose || '',

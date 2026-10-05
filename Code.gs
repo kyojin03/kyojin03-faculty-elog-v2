@@ -17,6 +17,8 @@ const SHEETS = {
   SETTINGS: 'Settings'
 };
 
+const APP_TIME_ZONE = 'Asia/Manila';
+
 const HEADERS = {
   'Logbook': [
     'Timestamp','Faculty Name','Department','Room Name','Room Number',
@@ -99,8 +101,6 @@ function doPost(event) {
       roomNumber: request.roomNumber,
       roomName: request.roomName,
       equipmentUsed: request.equipmentUsed,
-      date: request.date,
-      timeIn: request.timeIn,
       timeOut: request.timeOut,
       activityType: request.activityType,
       purpose: request.purpose,
@@ -140,7 +140,7 @@ function parsePostRequest_(event) {
 
 function friendlySubmitError_(error) {
   const message = clean_(error && error.message);
-  if (/ is required\.$/.test(message) || message === 'Time-out cannot be earlier than Time-in.') {
+  if (/ is required\.$/.test(message) || message === 'Time Out must be later than the server-recorded Time In.') {
     return message;
   }
   return 'Unable to save your log. Please try again.';
@@ -162,6 +162,7 @@ function logApiError_(context, error) {
  */
 function setupSheets() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
+  ensureSpreadsheetTimeZone_(ss);
 
   Object.keys(HEADERS).forEach(name => {
     let sh = ss.getSheetByName(name);
@@ -184,14 +185,13 @@ function setupSheets() {
     sh.autoResizeColumns(1, headers.length);
   });
 
-  // Ensure Logbook Timestamp column uses M/d/yyyy h:mm:ss AM/PM display while values remain Date (Asia/Manila)
+  // Keep Logbook date/time values sortable while displaying them in the required formats.
   const logbookSheet = ss.getSheetByName(SHEETS.LOGBOOK);
   if (logbookSheet) {
-    if (logbookSheet.getLastRow() > 1) {
-      logbookSheet.getRange(2, 1, logbookSheet.getLastRow() - 1, 1).setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
-    } else {
-      logbookSheet.getRange('A2:A').setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
-    }
+    const rowCount = Math.max(logbookSheet.getLastRow() - 1, 1);
+    logbookSheet.getRange(2, 1, rowCount, 1).setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
+    logbookSheet.getRange(2, 7, rowCount, 1).setNumberFormat('M/d/yyyy');
+    logbookSheet.getRange(2, 8, rowCount, 2).setNumberFormat('h:mm AM/PM');
   }
 
   seedSettings_();
@@ -224,10 +224,10 @@ function getReadOnlyData() {
 }
 
 function submitLog(entry) {
-  validateLog_(entry);
-
+  const now = new Date();
+  const timeOut = validateLog_(entry, now);
   const sh = getRequiredSheet_(SHEETS.LOGBOOK);
-  const now = new Date(); // real Date value; project timezone Asia/Manila
+  ensureSpreadsheetTimeZone_(sh.getParent());
   const row = [
     now,
     clean_(entry.facultyName),
@@ -235,9 +235,9 @@ function submitLog(entry) {
     clean_(entry.roomName),
     clean_(entry.roomNumber),
     clean_(entry.equipmentUsed),
-    clean_(entry.date),
-    clean_(entry.timeIn),
-    clean_(entry.timeOut),
+    now,
+    now,
+    timeOut,
     clean_(entry.activityType),
     clean_(entry.purpose),
     clean_(entry.remarks)
@@ -245,13 +245,10 @@ function submitLog(entry) {
 
   sh.appendRow(row);
 
-  // Explicitly apply display format M/d/yyyy h:mm:ss AM/PM to Timestamp while keeping value as Date (Asia/Manila)
-  const timestampRow = sh.getLastRow();
-  sh.getRange(timestampRow, 1).setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
-  // Ensure existing Logbook Timestamp cells remain consistently formatted
-  if (sh.getLastRow() > 1) {
-    sh.getRange(2, 1, sh.getLastRow() - 1, 1).setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
-  }
+  const logRow = sh.getLastRow();
+  sh.getRange(logRow, 1).setNumberFormat('M/d/yyyy h:mm:ss AM/PM');
+  sh.getRange(logRow, 7).setNumberFormat('M/d/yyyy');
+  sh.getRange(logRow, 8, 1, 2).setNumberFormat('h:mm AM/PM');
 
   return {
     success: true,
@@ -352,13 +349,17 @@ function getRequiredSheet_(name) {
   return sh;
 }
 
-function validateLog_(e) {
+function ensureSpreadsheetTimeZone_(spreadsheet) {
+  if (spreadsheet.getSpreadsheetTimeZone() !== APP_TIME_ZONE) {
+    spreadsheet.setSpreadsheetTimeZone(APP_TIME_ZONE);
+  }
+}
+
+function validateLog_(e, now) {
   const required = [
     ['facultyName','Faculty Name'],
     ['department','Department'],
     ['roomNumber','Room Number'],
-    ['date','Date'],
-    ['timeIn','Time In'],
     ['timeOut','Time Out'],
     ['activityType','Activity Type'],
     ['purpose','Purpose']
@@ -368,9 +369,32 @@ function validateLog_(e) {
     if (!e || !clean_(e[key])) throw new Error(label + ' is required.');
   });
 
-  if (String(e.timeOut) < String(e.timeIn)) {
-    throw new Error('Time-out cannot be earlier than Time-in.');
+  const timeOut = timeOnManilaDate_(now, e.timeOut);
+  if (timeOut.getTime() <= now.getTime()) {
+    throw new Error('Time Out must be later than the server-recorded Time In.');
   }
+  return timeOut;
+}
+
+function timeOnManilaDate_(now, value) {
+  const time = parseClockTime_(value);
+  if (!time) throw new Error('Time Out is required.');
+  const date = Utilities.formatDate(now, APP_TIME_ZONE, 'yyyy-MM-dd');
+  return new Date(`${date}T${String(time.hour).padStart(2, '0')}:${String(time.minute).padStart(2, '0')}:00+08:00`);
+}
+
+function parseClockTime_(value) {
+  const match = clean_(value).toUpperCase().match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/);
+  if (!match) return null;
+  let hour = Number(match[1]);
+  const minute = Number(match[2]);
+  const period = match[3];
+  if (minute > 59 || (period ? hour < 1 || hour > 12 : hour > 23)) return null;
+  if (period) {
+    if (hour === 12) hour = 0;
+    if (period === 'PM') hour += 12;
+  }
+  return { hour: hour, minute: minute };
 }
 
 function seedSettings_() {
@@ -401,17 +425,16 @@ function normalizeDate_(v) {
 
   const d = new Date(s);
   if (!isNaN(d)) {
-    return Utilities.formatDate(d, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    return Utilities.formatDate(d, APP_TIME_ZONE, 'yyyy-MM-dd');
   }
   return s;
 }
 
 function minutesBetween_(a,b) {
-  if (!a || !b) return 0;
-  const x = String(a).split(':').map(Number);
-  const y = String(b).split(':').map(Number);
-  if (x.length < 2 || y.length < 2 || x.some(isNaN) || y.some(isNaN)) return 0;
-  return (y[0] * 60 + y[1]) - (x[0] * 60 + x[1]);
+  const start = parseClockTime_(a);
+  const end = parseClockTime_(b);
+  if (!start || !end) return 0;
+  return (end.hour * 60 + end.minute) - (start.hour * 60 + start.minute);
 }
 
 function increment_(obj, key, amount) {

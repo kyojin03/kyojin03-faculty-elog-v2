@@ -1,20 +1,10 @@
   const Logbook = (() => {
     let filtersReady = false;
 
-    function setDateTimeDefaults() {
-      const now = new Date();
-      const pad = number => String(number).padStart(2, '0');
-      App.byId('date').value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-      App.byId('timeIn').value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-      App.byId('timeOut').min = App.byId('timeIn').value;
-    }
-
     function initialize() {
-      setDateTimeDefaults();
       App.byId('logForm').addEventListener('submit', handleSubmit);
       App.byId('roomNumber').addEventListener('change', updateRoomName);
-      App.byId('timeIn').addEventListener('change', validateTimes);
-      App.byId('timeOut').addEventListener('change', validateTimes);
+      App.byId('timeOut').addEventListener('input', clearTimeOutError);
       App.byId('clearFilters').addEventListener('click', clearFilters);
       App.byId('refreshLogs').addEventListener('click', () => loadLogs(true));
 
@@ -75,20 +65,6 @@
       if (departments.includes(currentFilter)) App.byId('deptFilter').value = currentFilter;
     }
 
-    function validateTimes() {
-      const timeIn = App.value('timeIn');
-      const timeOut = App.value('timeOut');
-      const field = App.byId('timeOut');
-      const error = App.byId('timeError');
-      App.byId('timeOut').min = timeIn || '';
-      const invalid = Boolean(timeIn && timeOut && timeOut < timeIn);
-      const message = invalid ? 'Time Out must be the same as or later than Time In.' : '';
-      field.setCustomValidity(message);
-      field.setAttribute('aria-invalid', invalid ? 'true' : 'false');
-      error.textContent = message;
-      return !invalid;
-    }
-
     function validateDateFilters() {
       const start = App.value('startDate');
       const end = App.value('endDate');
@@ -99,6 +75,13 @@
       field.setAttribute('aria-invalid', invalid ? 'true' : 'false');
       error.textContent = message;
       return !invalid;
+    }
+
+    function clearTimeOutError() {
+      const field = App.byId('timeOut');
+      field.setCustomValidity('');
+      field.setAttribute('aria-invalid', 'false');
+      App.byId('timeError').textContent = '';
     }
 
     function getFilters() {
@@ -270,8 +253,6 @@
         roomNumber: App.value('roomNumber'),
         roomName: App.value('roomName'),
         equipmentUsed: uppercase(App.value('equipmentUsed')),
-        date: App.value('date'),
-        timeIn: App.value('timeIn'),
         timeOut: App.value('timeOut'),
         activityType: App.value('activityType'),
         purpose: uppercase(App.value('purpose')),
@@ -292,7 +273,7 @@
       event.preventDefault();
       if (App.state.submitPending) return;
       const form = App.byId('logForm');
-      if (!validateTimes() || !form.checkValidity()) {
+      if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
@@ -302,13 +283,21 @@
         const response = await App.runServer('submitLog', buildEntry());
         form.reset();
         App.byId('roomName').value = '';
-        setDateTimeDefaults();
-        validateTimes();
         App.showToast(response?.message || 'Your laboratory session was recorded.', 'success', 'Log submitted');
         await loadLogs(false);
       } catch (error) {
         App.logTechnicalError('Logbook submission failed.', error);
-        App.showToast('Unable to save your log. Please review the details and try again.', 'error');
+        const message = error?.message === 'Time Out must be later than the server-recorded Time In.'
+          ? error.message
+          : 'Unable to save your log. Please review the details and try again.';
+        if (message === error?.message) {
+          const field = App.byId('timeOut');
+          field.setCustomValidity(message);
+          field.setAttribute('aria-invalid', 'true');
+          App.byId('timeError').textContent = message;
+          field.focus();
+        }
+        App.showToast(message, 'error');
       } finally {
         setSubmitting(false);
       }
