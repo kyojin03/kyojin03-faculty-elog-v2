@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0b2447">
   <title>Good Samaritan Colleges | Laboratory Log In System</title>
   <link rel="icon" type="image/png" href="assets/images/good-samaritan-colleges-logo.png">
-  <link rel="stylesheet" href="css/styles.css?v=20261006a">
+  <link rel="stylesheet" href="css/styles.css?v=20261006b">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -38,7 +38,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z"/></svg>
         </button>
         <div class="topbar-title">
-          <span class="eyebrow">LABORATOY LOG IN SYSTEM</span>
+          <span class="eyebrow">Laboratory Log In System</span>
           <h1 id="pageTitle">Logbook</h1>
         </div>
         <div class="system-status" title="Google Sheets is the system of record">
@@ -167,16 +167,21 @@
 
         <section id="view-reports" class="view" aria-labelledby="reportsHeading">
           <div class="page-heading report-screen-heading">
-            <div><span class="section-kicker">Management reporting</span><h2 id="reportsHeading">Laboratory Utilization Report</h2><p>Concise answers to who used the laboratories, what was recorded, when activity occurred, and where it took place.</p></div>
-            <div class="page-actions report-actions">
-              <div class="month-field"><label for="reportPreset">Date preset</label><select id="reportPreset"><option value="current-month">Current month</option><option value="previous-month">Previous month</option><option value="last-30-days">Last 30 days</option><option value="custom">Custom range</option></select></div>
-              <div class="month-field"><label for="reportMonth">Quick month</label><input id="reportMonth" type="month"></div>
-              <div class="month-field"><label for="reportStartDate">Start date</label><input id="reportStartDate" type="date"></div>
-              <div class="month-field"><label for="reportEndDate">End date</label><input id="reportEndDate" type="date"></div>
-              <button class="button secondary-button" id="refreshReports" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.3L13 11h7V4l-2.3 2.3Z"/></svg>Refresh</button>
+            <div><span class="section-kicker">Management reporting</span><h2 id="reportsHeading">Laboratory Utilization Report</h2><p>Explore recorded laboratory activity for your selected period.</p></div>
+            <div class="page-actions report-export-actions">
               <button class="button secondary-button" id="exportReports" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v10l3.5-3.5 1.4 1.4L12 16.8l-5.9-5.9 1.4-1.4L11 13V3ZM5 19h14v2H5v-2Z"/></svg>Export Excel</button>
               <button class="button primary-button" id="printReports" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v4H6V3Zm2 2h8V5H8Zm-2 9h12v7H6v-7Zm2 2v3h8v-3H8Zm-4-8h16a2 2 0 0 1 2 2v6h-3v-4H5v4H2v-6a2 2 0 0 1 2-2Z"/></svg>Print / PDF</button>
             </div>
+          </div>
+
+          <div class="report-toolbar" role="group" aria-label="Reporting period controls">
+            <div class="report-filter-fields">
+              <div class="month-field"><label for="reportPreset">Period</label><select id="reportPreset"><option value="current-month">Current month</option><option value="previous-month">Previous month</option><option value="last-30-days">Last 30 days</option><option value="custom">Custom range</option></select></div>
+              <div class="month-field"><label for="reportMonth">Jump to month</label><input id="reportMonth" type="month"></div>
+              <div class="month-field"><label for="reportStartDate">Start date</label><input id="reportStartDate" type="date"></div>
+              <div class="month-field"><label for="reportEndDate">End date</label><input id="reportEndDate" type="date"></div>
+            </div>
+            <button class="button secondary-button" id="refreshReports" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.7 6.3A8 8 0 1 0 20 12h-2a6 6 0 1 1-1.8-4.3L13 11h7V4l-2.3 2.3Z"/></svg>Refresh</button>
           </div>
 
           <div class="report-status" role="status" aria-live="polite">
@@ -196,23 +201,24 @@
 
           <div class="summary-grid report-summary-grid" id="reportSummary">
             <article class="summary-card"><div class="summary-icon blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5V3Zm2 2v14h10V5H7Zm2 3h6v2H9V8Zm0 4h6v2H9v-2Z"/></svg></div><div><span>Total Logs</span><strong id="statLogs">--</strong><small>Included records</small></div></article>
-            <article class="summary-card"><div class="summary-icon teal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm-8 18v-3c0-3.3 3.6-5 8-5s8 1.7 8 5v3h-2v-3c0-1.6-2.4-3-6-3s-6 1.4-6 3v3H4Z"/></svg></div><div><span>Faculty Labels</span><strong id="statFaculty">--</strong><small>Distinct recorded labels</small></div></article>
+            <article class="summary-card"><div class="summary-icon teal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm-8 18v-3c0-3.3 3.6-5 8-5s8 1.7 8 5v3h-2v-3c0-1.6-2.4-3-6-3s-6 1.4-6 3v3H4Z"/></svg></div><div><span>Faculty</span><strong id="statFaculty">--</strong><small>Distinct recorded names</small></div></article>
             <article class="summary-card"><div class="summary-icon amber"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13h-6v-6h-4v6H4Zm2-2h2v-6h8v6h2V9l-6-3.8L6 9v10Z"/></svg></div><div><span>Rooms</span><strong id="statRooms">--</strong><small>Distinct recorded rooms</small></div></article>
             <article class="summary-card"><div class="summary-icon orange"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16Zm-1 3h2v4.6l3.2 1.9-1 1.7-4.2-2.5V7Z"/></svg></div><div><span>Recorded Hours</span><strong id="statHours">--</strong><small id="statHoursDetail">Usable duration pairs</small></div></article>
           </div>
 
           <section class="report-section report-page report-executive">
             <div class="report-section-heading"><div><span class="report-section-number">01</span><h3>Executive Summary</h3></div><p id="reportOverviewNarrative">Loading report analysis...</p></div>
-            <div class="table-wrap report-table-wrap"><table class="report-table"><thead><tr><th scope="col">Management question</th><th scope="col">Leading result</th><th scope="col">Evidence</th></tr></thead><tbody id="reportExecutiveBody"></tbody></table></div>
+            <div class="table-wrap report-table-wrap" tabindex="0" role="region" aria-label="Executive summary"><table class="report-table"><thead><tr><th scope="col">Management question</th><th scope="col">Leading result</th><th scope="col">Evidence</th></tr></thead><tbody id="reportExecutiveBody"></tbody></table></div>
+            <small class="report-method-note">Counts and shares refer to the included logs for the selected period.</small>
           </section>
 
           <div class="report-grid report-two-column">
             <section class="report-card report-page">
-              <div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm-8 18v-3c0-3.3 3.6-5 8-5s8 1.7 8 5v3h-2v-3c0-1.6-2.4-3-6-3s-6 1.4-6 3v3H4Z"/></svg></div><div><span class="report-section-number">02 / WHO</span><h3>Top Recorded Faculty</h3><p>Top five faculty labels by log count</p></div></div>
-              <div class="report-chart-grid compact"><div><h4>Faculty labels</h4><div id="reportFaculty" class="ranking-list report-ranking"></div></div><div><h4>Departments</h4><div id="reportDepartments" class="ranking-list report-ranking"></div></div></div><p class="report-analysis" id="facultyAnalysis"></p>
+              <div class="report-card-heading"><div class="mini-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-8a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm-8 18v-3c0-3.3 3.6-5 8-5s8 1.7 8 5v3h-2v-3c0-1.6-2.4-3-6-3s-6 1.4-6 3v3H4Z"/></svg></div><div><span class="report-section-number">02 / WHO</span><h3>Top Recorded Faculty</h3><p>Top five recorded names and departments</p></div></div>
+              <div class="report-chart-grid compact"><div><h4>Faculty</h4><div id="reportFaculty" class="ranking-list report-ranking"></div></div><div><h4>Departments</h4><div id="reportDepartments" class="ranking-list report-ranking"></div></div></div><p class="report-analysis" id="facultyAnalysis"></p>
             </section>
             <section class="report-card report-page">
-              <div class="report-card-heading"><div class="mini-icon orange"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13h-6v-6h-4v6H4Zm2-2h2v-6h8v6h2V9l-6-3.8L6 9v10Z"/></svg></div><div><span class="report-section-number">03 / WHERE</span><h3>Most Used Rooms</h3><p>Room Name and Room Number kept together</p></div></div>
+              <div class="report-card-heading"><div class="mini-icon orange"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V8l8-5 8 5v13h-6v-6h-4v6H4Zm2-2h2v-6h8v6h2V9l-6-3.8L6 9v10Z"/></svg></div><div><span class="report-section-number">03 / WHERE</span><h3>Most Used Rooms</h3><p>Top five rooms by recorded logs</p></div></div>
               <div id="reportRooms" class="ranking-list report-ranking"></div><p class="report-analysis" id="roomAnalysis"></p>
             </section>
           </div>
@@ -224,7 +230,7 @@
 
           <section class="report-section report-page">
             <div class="report-section-heading"><div><span class="report-section-number">05 / PEAK DATES</span><h3>Peak Date Analysis</h3></div><p id="peakAnalysis"></p></div>
-            <div class="table-wrap report-table-wrap"><table class="report-table"><thead><tr><th scope="col">Month</th><th scope="col">Monthly logs</th><th scope="col">Peak date(s)</th><th scope="col">Peak logs</th><th scope="col">Share of month</th></tr></thead><tbody id="reportPeakDates"></tbody></table></div>
+            <div class="table-wrap report-table-wrap" tabindex="0" role="region" aria-label="Monthly peak dates"><table class="report-table"><thead><tr><th scope="col">Month</th><th scope="col">Monthly logs</th><th scope="col">Peak date(s)</th><th scope="col">Peak logs</th><th scope="col">Share of month</th></tr></thead><tbody id="reportPeakDates"></tbody></table></div>
           </section>
 
           <section class="report-section report-page">
