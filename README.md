@@ -46,7 +46,7 @@ The configured API URL is stored once in `js/config.js`.
 | GET | `initialData` | Initial rooms, settings, inventories, forms, and Logbook data |
 | GET | `readOnlyData` | Refresh rooms, settings, inventories, and forms |
 | GET | `logbook` | Filtered Logbook records |
-| GET | `reports` | Monthly read-only report data |
+| GET | `reports` | Read-only utilization analytics for an inclusive date range (legacy month calls remain supported) |
 | POST | `submitLog` | Submit the only website write operation |
 
 Examples:
@@ -55,6 +55,7 @@ Examples:
 GET /exec?action=initialData
 GET /exec?action=readOnlyData
 GET /exec?action=logbook&search=microscope&department=COLLEGE%20OF%20NURSING
+GET /exec?action=reports&startDate=2026-08-01&endDate=2026-09-30
 GET /exec?action=reports&month=2026-08
 POST /exec?action=submitLog
 ```
@@ -95,5 +96,7 @@ Do not publish `Code.gs` as a browser script. It is copied only into the existin
 ## Data ownership rule
 
 Only Logbook accepts website input through the `submitLog` action. Reports, Laboratory Supplies, Glassware, Equipment, Specialized Equipment, and Laboratory Forms are read-only. Their information is maintained directly in Google Sheets.
+
+The Reports tab filters on the Logbook's activity `Date` field using inclusive Asia/Manila calendar dates. It provides management summaries and an Excel-compatible SpreadsheetML export without modifying source rows.
 
 `Rooms` controls the room dropdown and room-name display. Active `Activity Type` rows in `Settings` control the activity selector. Existing Logbook names and departments provide form suggestions and filters.

@@ -18,7 +18,7 @@
       displayedLogs: [],
       rooms: [],
       settings: [],
-      reportsMonth: '',
+      reportsRangeKey: '',
       reportData: null,
       submitPending: false,
       logRequestId: 0,

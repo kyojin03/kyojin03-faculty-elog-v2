@@ -58,7 +58,16 @@ window.FacultyElogApi = (() => {
         endDate: filters.endDate
       });
     } else if (functionName === 'getReports') {
-      url = endpoint(route.action, { month: args[0] || '' });
+      const filters = args[0] || {};
+      if (typeof filters === 'string') {
+        url = endpoint(route.action, { month: filters });
+      } else {
+        url = endpoint(route.action, {
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+          month: filters.month
+        });
+      }
     } else if (functionName === 'submitLog') {
       const entry = args[0] || {};
       options.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
